@@ -20,10 +20,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const fetchUser = async (firebaseUser: FirebaseUser) => {
+    try {
+      const token = await firebaseUser.getIdToken();
+      const response = await fetch('/api/auth/user', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const userData = await response.json();
+        setUser(userData);
+      }
+    } catch (error) {
+      console.error('Failed to fetch user data:', error);
+    }
+  };
+
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setFirebaseUser(firebaseUser);
-      setUser(null); // Temporarily set to null
+
+      if (firebaseUser) {
+        await fetchUser(firebaseUser);
+      } else {
+        setUser(null);
+      }
+
       setLoading(false);
     });
     return unsubscribe;
