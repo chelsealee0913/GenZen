@@ -1,3 +1,4 @@
+'use client'
 interface MeditationCardProps {
   meditation: {
     id: string
