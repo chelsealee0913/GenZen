@@ -1,14 +1,16 @@
 'use client'
+
 import { useState } from 'react'
 
 interface MeditationGeneratorProps {
   onComplete: (meditation: any) => void
+  initialType?: string
 }
 
-export default function MeditationGenerator({ onComplete }: MeditationGeneratorProps) {
+export default function MeditationGenerator({ onComplete, initialType }: MeditationGeneratorProps) {
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
-    type: 'relaxation',
+    type: initialType || 'relaxation',
     duration: 10,
     voice: 'female',
     background: 'ocean_waves',
